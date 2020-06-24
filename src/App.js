@@ -4,31 +4,39 @@ import Form from "./components/Form";
 import Installments from "./components/Installments";
 
 function App() {
-  const [total, setTotal] = useState(0);
-  const [parcela, setParcela] = useState(0);
-  const [rendimento, setRendimento] = useState(0);
-  const [taxa, setTaxa] = useState(0);
+  const [montante, setMontante] = useState(0);
+  const [jurosMensal, setJurosMensal] = useState(0);
+  const [periodo, setPeriodo] = useState(0);
 
-  const handleChangeTotal = (total) => {
-    setTotal(total);
+  const handleChangeMontante = (montante) => {
+    setMontante(montante);
   };
 
-  const handleChangeParcela = (parcela) => {
-    setParcela(parcela);
+  const handleChangeJurosMensal = (jurosMensal) => {
+    setJurosMensal(jurosMensal);
   };
 
-  const handleChangeRendimento = (rendimento) => {
-    setRendimento(rendimento);
+  const handleChangePeriodo = (periodo) => {
+    setPeriodo(periodo);
   };
 
-  const handleChangeTaxa = (taxa) => {
-    setTaxa(taxa);
+  const jurosCompostos = (valorInicial, taxa, tempo) => {
+    const P = valorInicial;
+    const i = taxa / 100;
+    const n = tempo;
+
+    return (P * Math.pow(1 + i, n)).toFixed(2);
   };
 
   let numParcela = [];
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < periodo; i++) {
     numParcela.push(i);
+  }
+
+  let color = "green";
+  if (jurosMensal < 0) {
+    color = "red";
   }
 
   return (
@@ -37,25 +45,29 @@ function App() {
 
       <div className="row">
         <Form
-          total={handleChangeTotal}
-          parcela={handleChangeParcela}
-          rendimento={handleChangeRendimento}
-          taxa={handleChangeTaxa}
+          montantePai={handleChangeMontante}
+          jurosMensalPai={handleChangeJurosMensal}
+          periodoPai={handleChangePeriodo}
         ></Form>
       </div>
 
       <div className="row">
-        {numParcela.map(() => {
+        {numParcela.map((item) => {
+          const calJurosCompostos = jurosCompostos(montante, jurosMensal, item + 1);
+          const calRendimento = (calJurosCompostos - montante).toFixed(2);
+          const tx = ((calRendimento * 100) / montante).toFixed(2) + "%";
+
           return (
             <Installments
-              total={total}
-              parcela={parcela}
-              rendimento={rendimento}
-              taxa={taxa}
+              key={item}
+              parcela={item + 1}
+              total={`R$ ${calJurosCompostos}`}
+              rendimento={`R$ ${calRendimento}`}
+              taxa={tx}
+              color={color}
             ></Installments>
           );
         })}
-        ;
       </div>
     </div>
   );

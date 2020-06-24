@@ -5,60 +5,48 @@ export default function Form(props) {
   const [jurosMensal, setJurosMensal] = useState(0);
   const [periodo, setPeriodo] = useState(0);
 
-  const jurosCompostos = (valorInicial, taxa, tempo) => {
-    const P = valorInicial;
-    const i = taxa;
-    const n = tempo;
-
-    return (P * (1 + i)) ^ n;
-  };
-
   const handleCalcMontante = (event) => {
     setMontante(event.target.value);
-    props.total(jurosCompostos(montante, jurosMensal, periodo));
-    props.taxa("0,50");
-    props.parcela(3);
-    props.rendimento("5,00");
+
+    props.montantePai(event.target.value);
+    props.jurosMensalPai(jurosMensal);
+    props.periodoPai(periodo);
+
     return;
   };
 
   const handleCalcTaxa = (event) => {
     setJurosMensal(event.target.value);
-    return jurosCompostos(montante, jurosMensal, periodo);
+
+    props.montantePai(montante);
+    props.jurosMensalPai(event.target.value);
+    props.periodoPai(periodo);
+
+    return;
   };
 
   const handleCalcPeriodo = (event) => {
     setPeriodo(event.target.value);
-    return jurosCompostos(montante, jurosMensal, periodo);
+
+    props.montantePai(montante);
+    props.jurosMensalPai(jurosMensal);
+    props.periodoPai(event.target.value);
+
+    return;
   };
 
   return (
     <div>
       <div className="input-field col s4">
-        <input
-          id="montante"
-          type="Number"
-          value={montante}
-          onChange={handleCalcMontante}
-        ></input>
+        <input id="montante" type="Number" value={montante} onChange={handleCalcMontante}></input>
         <label htmlFor="montante">Montante inicial</label>
       </div>
       <div className="input-field col s4">
-        <input
-          id="jurosMensal"
-          type="Number"
-          value={jurosMensal}
-          onChange={handleCalcTaxa}
-        ></input>
+        <input id="jurosMensal" type="Number" value={jurosMensal} onChange={handleCalcTaxa}></input>
         <label htmlFor="jurosMensal">Taxa de juros mensal</label>
       </div>
       <div className="input-field col s4">
-        <input
-          id="periodo"
-          type="Number"
-          value={periodo}
-          onChange={handleCalcPeriodo}
-        ></input>
+        <input id="periodo" type="Number" value={periodo} onChange={handleCalcPeriodo}></input>
         <label htmlFor="periodo">Período (meses)</label>
       </div>
     </div>
